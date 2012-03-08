@@ -1,0 +1,28 @@
+scriptPath = '../Build/'
+testPath   = '../Tests/specs/'
+
+{spawn, exec} = require 'child_process'
+util = require 'util'
+growl = require 'growl'
+
+task 'watch', 'Watch source files and build JS', (options) ->
+  display = (message) ->
+    growl 'Compiled: ' + message
+  displayError = (message) ->
+    growl 'ERROR: ' + message
+  runCommand = (name, args...) ->
+    proc =           spawn name, args
+    proc.stderr.on 'data', (buffer) ->
+      console.log buffer.toString()
+    proc.stdout.on 'data', (buffer) ->
+      if buffer.toString().match(/error/gi)
+        displayError buffer.toString() 
+      else
+        display buffer.toString()
+      console.log buffer.toString()
+    proc.on 'exit', (status) ->
+      if status isnt 0
+        growl 'Error—exit with code: ' + status
+        process.exit(1)
+  runCommand 'coffee', '-o', scriptPath, '-wc', 'Scripts/'
+  runCommand 'coffee', '-o', testPath, '-wc', 'Tests/'

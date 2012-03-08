@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+  <link rel="stylesheet" type="text/css" href="../Helper/Phing/Buildfiles/Tests/Helper/jasmine/lib/jasmine-1.1.0/jasmine.css">
+  <script type="text/javascript" src="../Helper/Phing/Buildfiles/Tests/Helper/jasmine/lib/jasmine-1.1.0/jasmine.js"></script>
+  <script type="text/javascript" src="../Helper/Phing/Buildfiles/Tests/Helper/jasmine/lib/jasmine-1.1.0/jasmine-html.js"></script>
+  <script type="text/javascript" src="../Helper/Phing/Buildfiles/Tests/Helper/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
+
+  <!-- We depend on ExtJS and jQuery here… -->
+  <script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/ext-all.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+  <!-- include source files here... -->
+  <script type="text/javascript" src="../Build/FormValidator.js"></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="specs/FormValidatorTest.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+	(function(){
+	  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+	  jasmine.getEnv().addReporter(new jasmine.PhantomJSReporter());
+	  jasmine.getEnv().execute();
+	})();
+</script>
+
+</body>
+</html>
