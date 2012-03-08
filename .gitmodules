@@ -1,0 +1,3 @@
+[submodule "Helper/Phing"]
+	path = Helper/Phing
+	url = git@github.com:alappe/phing-build.git
