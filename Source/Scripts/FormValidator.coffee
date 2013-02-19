@@ -240,7 +240,7 @@ window.FormValidator = class FormValidator
   # @return {Number}
   _getSelectedIndex: (field) ->
     switch @selectorEngine
-      when 'jQuery' then (jQuery field).prop('selectedIndex');
+      when 'jQuery' then (jQuery field).prop('selectedIndex')
       when 'Ext' then (Ext.fly field).dom.selectedIndex
 
   # Check of field has checked property set to true:
@@ -282,7 +282,7 @@ window.FormValidator = class FormValidator
   # @param {Element} field
   # @return this
   markFieldInvalid: (field) ->
-    box = field.parent();
+    box = field.parent()
 
     # Set the invalidClass unless we already have it…
     (@_addCls field, @invalidClass) unless (@_hasCls field, @invalidClass)
@@ -372,7 +372,7 @@ window.FormValidator = class FormValidator
         status = false
       if (@_hasCls field, 'validate-number-range') and status
         classes = @_getClasses field
-        min = if (classes.match /validate-number-range-min/)? then (parseInt (classes.replace /.*validate-number-range-min(\d*).*/, '$1'), 10) else null 
+        min = if (classes.match /validate-number-range-min/)? then (parseInt (classes.replace /.*validate-number-range-min(\d*).*/, '$1'), 10) else null
         max = if (classes.match /validate-number-range-max/)? then (parseInt (classes.replace /.*validate-number-range-max(\d*).*/, '$1'), 10) else null
         # Alternate way to specify range:
         unless min? and max?
