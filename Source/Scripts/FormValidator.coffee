@@ -51,19 +51,29 @@
 #
 #   With jQuery:
 #   -----8<-----8<-----8<-----8<-----
-# (jQuery 'document').ready ->
-#   # Initialize
-#   formValidator = new FormValidator()
-#   # On blur of fields:
-#   fields = for formField in (jQuery '.validate')
-#     (jQuery formField).on 'blur', (ev, field) ->
-#       formValidator.validate (jQuery field)
-#   # On submit of form:
-#   forms = for fform in (jQuery '.form-validate')
-#     (jQuery fform).on 'submit', (ev, form) ->
-#       formValidator.form = true
-#       formValidator.event = ev
-#       formValidator.validate (jQuery field) for field in (jQuery form).select '.validate'
+#  (jQuery 'document').ready ->
+#    # Initialize
+#    formValidator = new window.FormValidator()
+#    
+#    # Check a whole form
+#    checkForm = (form) ->
+#      (jQuery form).on 'submit', (ev) ->
+#        formValidator.form = true
+#        formValidator.event = ev
+#        formValidator.validate (jQuery field) for field in (jQuery form).find '.validate'
+#
+#    # Check a field
+#    checkField = (field) ->
+#      (jQuery formField).on 'blur', (ev) ->
+#        formValidator.validate (jQuery @)
+#
+#    # Bindings:
+#    #
+#    # On blur of fields:
+#    checkField formField for formField in (jQuery '.validate')
+#    # On submit of form:
+#    checkForm form for form in (jQuery '.form-validate')
+#   
 #   -----8<-----8<-----8<-----8<-----
 #
 window.FormValidator = class FormValidator
@@ -97,6 +107,9 @@ window.FormValidator = class FormValidator
   # The event to cancel in case form validation fails
   event: undefined
 
+  # Throw error messages?
+  errorMessages: true
+
   # The current message
   message: ''
 
@@ -121,7 +134,7 @@ window.FormValidator = class FormValidator
 
   constructor: ->
     if jQuery?
-      @selectorEngine = 'jQuery' if jQuery.fn.jquery.match /^1\.7.*$/
+      @selectorEngine = 'jQuery' if jQuery.fn.jquery.match /^1\.9.*$/
     else if Ext?
       @selectorEngine = 'Ext' if Ext.versions.core.version.match /^4\..*$/
     unless @selectorEngine?
@@ -282,27 +295,28 @@ window.FormValidator = class FormValidator
   # @param {Element} field
   # @return this
   markFieldInvalid: (field) ->
-    box = field.parent()
 
     # Set the invalidClass unless we already have it…
     (@_addCls field, @invalidClass) unless (@_hasCls field, @invalidClass)
 
-    @removeErrors field
+    if @errorMessages is true
+      @removeErrors field
 
-    # Only for steuerring to only have one error per line instead of
-    # per field:
-    if @selectorEngine is 'jQuery'
-      relatedErrors = (jQuery field).parents('fieldset').find '.'+@errorClass
-      if relatedErrors.length is 0
+      box = field.parent()
+      # Only for steuerring to only have one error per line instead of
+      # per field:
+      if @selectorEngine is 'jQuery'
+        relatedErrors = (jQuery field).parents('fieldset').find '.'+@errorClass
+        if relatedErrors.length is 0
+          @_createChild box,
+            tag: 'div'
+            cls: @errorClass
+            html: @message
+      else
         @_createChild box,
           tag: 'div'
           cls: @errorClass
           html: @message
-    else
-      @_createChild box,
-        tag: 'div'
-        cls: @errorClass
-        html: @message
 
     @_stopEvent @event if @form
     @
