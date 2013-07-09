@@ -51,19 +51,29 @@
 #
 #   With jQuery:
 #   -----8<-----8<-----8<-----8<-----
-# (jQuery 'document').ready ->
-#   # Initialize
-#   formValidator = new FormValidator()
-#   # On blur of fields:
-#   fields = for formField in (jQuery '.validate')
-#     (jQuery formField).on 'blur', (ev, field) ->
-#       formValidator.validate (jQuery field)
-#   # On submit of form:
-#   forms = for fform in (jQuery '.form-validate')
-#     (jQuery fform).on 'submit', (ev, form) ->
-#       formValidator.form = true
-#       formValidator.event = ev
-#       formValidator.validate (jQuery field) for field in (jQuery form).select '.validate'
+#  (jQuery 'document').ready ->
+#    # Initialize
+#    formValidator = new window.FormValidator()
+#    
+#    # Check a whole form
+#    checkForm = (form) ->
+#      (jQuery form).on 'submit', (ev) ->
+#        formValidator.form = true
+#        formValidator.event = ev
+#        formValidator.validate (jQuery field) for field in (jQuery form).find '.validate'
+#
+#    # Check a field
+#    checkField = (field) ->
+#      (jQuery formField).on 'blur', (ev) ->
+#        formValidator.validate (jQuery @)
+#
+#    # Bindings:
+#    #
+#    # On blur of fields:
+#    checkField formField for formField in (jQuery '.validate')
+#    # On submit of form:
+#    checkForm form for form in (jQuery '.form-validate')
+#   
 #   -----8<-----8<-----8<-----8<-----
 #
 window.FormValidator = class FormValidator
