@@ -318,8 +318,8 @@ window.FormValidator = class FormValidator
           cls: @errorClass
           html: @message
 
-      @_stopEvent @event if @form
-      @
+    @_stopEvent @event if @form
+    @
 
   # Mark field valid (and remove error messages in case they exist)
   #
