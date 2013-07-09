@@ -107,6 +107,9 @@ window.FormValidator = class FormValidator
   # The event to cancel in case form validation fails
   event: undefined
 
+  # Throw error messages?
+  errorMessages: true
+
   # The current message
   message: ''
 
@@ -131,7 +134,7 @@ window.FormValidator = class FormValidator
 
   constructor: ->
     if jQuery?
-      @selectorEngine = 'jQuery' if jQuery.fn.jquery.match /^1\.7.*$/
+      @selectorEngine = 'jQuery' if jQuery.fn.jquery.match /^1\.9.*$/
     else if Ext?
       @selectorEngine = 'Ext' if Ext.versions.core.version.match /^4\..*$/
     unless @selectorEngine?
@@ -292,30 +295,31 @@ window.FormValidator = class FormValidator
   # @param {Element} field
   # @return this
   markFieldInvalid: (field) ->
-    box = field.parent()
 
     # Set the invalidClass unless we already have it…
     (@_addCls field, @invalidClass) unless (@_hasCls field, @invalidClass)
 
-    @removeErrors field
+    if @errorMessages is true
+      @removeErrors field
 
-    # Only for steuerring to only have one error per line instead of
-    # per field:
-    if @selectorEngine is 'jQuery'
-      relatedErrors = (jQuery field).parents('fieldset').find '.'+@errorClass
-      if relatedErrors.length is 0
+      box = field.parent()
+      # Only for steuerring to only have one error per line instead of
+      # per field:
+      if @selectorEngine is 'jQuery'
+        relatedErrors = (jQuery field).parents('fieldset').find '.'+@errorClass
+        if relatedErrors.length is 0
+          @_createChild box,
+            tag: 'div'
+            cls: @errorClass
+            html: @message
+      else
         @_createChild box,
           tag: 'div'
           cls: @errorClass
           html: @message
-    else
-      @_createChild box,
-        tag: 'div'
-        cls: @errorClass
-        html: @message
 
-    @_stopEvent @event if @form
-    @
+      @_stopEvent @event if @form
+      @
 
   # Mark field valid (and remove error messages in case they exist)
   #
